@@ -1,16 +1,16 @@
 package io.github.gbrandrade.model;
 
-public class Plataforma {
+public class Empresa {
 
     private int id;
     private String nome;
 
-    public Plataforma(int id, String nome) {
+    public Empresa(int id, String nome) {
         this.id = id;
         this.nome = nome;
     }
 
-    public Plataforma(String nome) {
+    public Empresa(String nome) {
         this.nome = nome;
     }
 
