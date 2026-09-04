@@ -32,6 +32,7 @@ public class Plataforma {
 
     @Override
     public String toString() {
-        return "Empresa{id=" + id + ", nome='" + nome + "'}";
+        return "Plataforma{id=" + id + ", nome='" + nome + "'}";
     }
+
 }
