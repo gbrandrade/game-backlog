@@ -1,11 +1,14 @@
 package io.github.gbrandrade.repository;
+
 import io.github.gbrandrade.config.ConexaoBD;
 import io.github.gbrandrade.model.Plataforma;
-
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.ResultSet;
+import java.util.List;
+import java.util.ArrayList;
 
 public class PlataformaRepository {
 
@@ -23,4 +26,25 @@ public class PlataformaRepository {
         }
     }
 
+    public List<Plataforma> listarTodas() throws SQLException {
+        String sql = "SELECT * FROM plataforma";
+        List<Plataforma> plataformas = new ArrayList<>();
+
+        try (Connection conexao = ConexaoBD.conectar();
+             PreparedStatement stmt = conexao.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String nome = rs.getString("nome");
+                Plataforma plataforma = new Plataforma(id, nome);
+                plataformas.add(plataforma);
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return plataformas;
+    }
 }
