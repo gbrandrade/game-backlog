@@ -2,6 +2,8 @@ package io.github.gbrandrade.repository;
 
 import io.github.gbrandrade.config.ConexaoBD;
 import io.github.gbrandrade.model.Plataforma;
+
+import javax.swing.*;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -46,5 +48,27 @@ public class PlataformaRepository {
         }
 
         return plataformas;
+    }
+
+    public Plataforma buscarPorId(int id) throws SQLException {
+        String sql = "SELECT * FROM plataforma WHERE id = ?";
+        Plataforma plataforma = null;
+
+        try (Connection conexao = ConexaoBD.conectar();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    plataforma = new Plataforma(id, rs.getString("nome"));
+                }
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return plataforma;
     }
 }
