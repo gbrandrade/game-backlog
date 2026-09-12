@@ -71,4 +71,20 @@ public class PlataformaRepository {
 
         return plataforma;
     }
+
+    public void atualizar(Plataforma plataforma) throws SQLException {
+        String sql = "UPDATE plataforma SET nome = ? WHERE id = ?";
+
+        try (Connection conexao = ConexaoBD.conectar();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+            stmt.setString(1, plataforma.getNome());
+            stmt.setInt(2, plataforma.getId());
+            stmt.executeUpdate();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
