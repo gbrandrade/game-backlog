@@ -3,7 +3,6 @@ package io.github.gbrandrade.repository;
 import io.github.gbrandrade.config.ConexaoBD;
 import io.github.gbrandrade.model.Plataforma;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -86,5 +85,4 @@ public class PlataformaRepository {
             throw new RuntimeException(e);
         }
     }
-
 }

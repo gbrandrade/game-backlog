@@ -1,6 +1,6 @@
 package io.github.gbrandrade.model;
 
-public class Plataforma {
+public class Empresa {
 
     private int id;
     private String nome;
