@@ -56,8 +56,8 @@ Essa arquitetura foi construída manualmente, sem uso de frameworks como Spring 
 - [x] Modelagem de domínio e banco de dados
 - [x] Camada `model` completa (5 entidades + 2 enums)
 - [x] Camada `repository` completa (CRUD via JDBC para as 5 entidades, incluindo `JOIN`s)
-- [ ] Camada `service` (regras de negócio)
-- [ ] Interface de interação (console)
+- [x] Camada `service` (regras de negócio)
+- [x] Interface de interação (console)
 
 ## Roadmap futuro
 
