@@ -1,104 +1,58 @@
 package io.github.gbrandrade.model;
 
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "registros_jogos")
 public class RegistroJogo {
 
-    private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    // Relação: Muitos Registos pertencem a Um Utilizador
+    @ManyToOne
+    @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
-    private Jogo jogo;
-    private Plataforma plataforma;
-    private Status status;
-    private double nota;
+
+    // O ID que vem da API do RAWG (ex: 3498 para GTA V)
+    @Column(name = "id_jogo_rawg", nullable = false)
+    private Long idJogoRawg;
+
+    @Column(nullable = false)
+    private Integer nota; // De 1 a 5
+
+    @Column(nullable = false, length = 20)
+    private String status; // JOGANDO, FINALIZADO, BACKLOG, DROPADO
+
+    @Column(columnDefinition = "TEXT")
     private String review;
-    private int horasParaZerar;
 
-    public RegistroJogo(int id, Usuario usuario, Jogo jogo, Plataforma plataforma, Status status, double nota, String review, int horasParaZerar) {
-        this.id = id;
-        this.usuario = usuario;
-        this.jogo = jogo;
-        this.plataforma = plataforma;
-        this.status = status;
-        this.nota = nota;
-        this.review = review;
-        this.horasParaZerar = horasParaZerar;
-    }
+    @Column(name = "data_registro", nullable = false)
+    private LocalDateTime dataRegistro = LocalDateTime.now();
 
-    public RegistroJogo(Usuario usuario, Jogo jogo, Plataforma plataforma, Status status, double nota, String review, int horasParaZerar) {
-        this.usuario = usuario;
-        this.jogo = jogo;
-        this.plataforma = plataforma;
-        this.status = status;
-        this.nota = nota;
-        this.review = review;
-        this.horasParaZerar = horasParaZerar;
-    }
+    public RegistroJogo() {}
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    // Getters e Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
+    public Usuario getUsuario() { return usuario; }
+    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
 
-    public void setJogo(Jogo jogo) {
-        this.jogo = jogo;
-    }
+    public Long getIdJogoRawg() { return idJogoRawg; }
+    public void setIdJogoRawg(Long idJogoRawg) { this.idJogoRawg = idJogoRawg; }
 
-    public void setPlataforma(Plataforma plataforma) {
-        this.plataforma = plataforma;
-    }
+    public Integer getNota() { return nota; }
+    public void setNota(Integer nota) { this.nota = nota; }
 
-    public void setStatus(Status status) {
-        this.status = status;
-    }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 
-    public void setNota(double nota) {
-        this.nota = nota;
-    }
+    public String getReview() { return review; }
+    public void setReview(String review) { this.review = review; }
 
-    public void setReview(String review) {
-        this.review = review;
-    }
-
-    public void setHorasParaZerar(int horasParaZerar) {
-        this.horasParaZerar = horasParaZerar;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public Jogo getJogo() {
-        return jogo;
-    }
-
-    public Plataforma getPlataforma() {
-        return plataforma;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public double getNota() {
-        return nota;
-    }
-
-    public String getReview() {
-        return review;
-    }
-
-    public int getHorasParaZerar() {
-        return horasParaZerar;
-    }
-
-    @Override
-    public String toString() {
-        return "RegistroJogo{id=" + id + ", usuario='" + usuario.getNome() + "', jogo='" + jogo.getNome() + "', plataforma='" + plataforma.getNome() + "', status=" + status + ", nota=" + nota + ", review='" + review + "', horasParaZerar=" + horasParaZerar + "}";
-    }
-
+    public LocalDateTime getDataRegistro() { return dataRegistro; }
+    public void setDataRegistro(LocalDateTime dataRegistro) { this.dataRegistro = dataRegistro; }
 }

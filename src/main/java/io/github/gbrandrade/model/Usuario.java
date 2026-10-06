@@ -1,60 +1,56 @@
 package io.github.gbrandrade.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "usuarios")
 public class Usuario {
 
-    private int id;
-    private String nome;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, unique = true, length = 50)
+    private String username;
+
+    @Column(nullable = false, unique = true)
     private String email;
+
+    @Column(nullable = false)
     private String senha;
 
-    public Usuario(int id, String nome, String email, String senha) {
-        this.id = id;
-        this.nome = nome;
-        this.email = email;
-        this.senha = senha;
-    }
+    // Funcionalidades Premium (Cosméticas)
+    @Column(name = "is_premium", nullable = false)
+    private boolean isPremium = false;
 
-    public Usuario(String nome, String email, String senha) {
-        this.nome = nome;
-        this.email = email;
-        this.senha = senha;
-    }
+    @Column(name = "cor_borda_perfil", length = 7)
+    private String corBordaPerfil; // Ex: "#0055ff" (estilo Google One)
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    @Column(name = "url_banner_perfil")
+    private String urlBannerPerfil;
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
+    // Construtor vazio obrigatório para o JPA
+    public Usuario() {}
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    // Getters e Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 
-    public int getId() {
-        return id;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public String getNome() {
-        return nome;
-    }
+    public String getSenha() { return senha; }
+    public void setSenha(String senha) { this.senha = senha; }
 
-    public String getEmail() {
-        return email;
-    }
+    public boolean isPremium() { return isPremium; }
+    public void setPremium(boolean premium) { isPremium = premium; }
 
-    public String getSenha() {
-        return senha;
-    }
+    public String getCorBordaPerfil() { return corBordaPerfil; }
+    public void setCorBordaPerfil(String corBordaPerfil) { this.corBordaPerfil = corBordaPerfil; }
 
-    @Override
-    public String toString() {
-        return "Usuario{id=" + id + ", nome='" + nome + "', email='" + email + "'}";
-    }
-
+    public String getUrlBannerPerfil() { return urlBannerPerfil; }
+    public void setUrlBannerPerfil(String urlBannerPerfil) { this.urlBannerPerfil = urlBannerPerfil; }
 }
