@@ -1,25 +1,25 @@
 package io.github.gbrandrade.repository;
 
 import io.github.gbrandrade.config.ConexaoBD;
-import io.github.gbrandrade.model.Plataforma;
+import io.github.gbrandrade.model.Empresa;
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.sql.ResultSet;
-import java.util.List;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
-public class PlataformaRepository {
+public class EmpresaRepository {
 
-    public void salvar(Plataforma plataforma) throws SQLException {
-        String sql = "INSERT INTO plataforma (nome) VALUES (?)";
+    public void salvar(Empresa empresa) throws SQLException {
+        String sql = "INSERT INTO empresa (nome) VALUES (?)";
 
         try (Connection conexao = ConexaoBD.conectar();
              PreparedStatement stmt = conexao.prepareStatement(sql)) {
 
-            stmt.setString(1, plataforma.getNome());
+            stmt.setString(1, empresa.getNome());
             stmt.executeUpdate();
 
         } catch (IOException e) {
@@ -27,9 +27,9 @@ public class PlataformaRepository {
         }
     }
 
-    public List<Plataforma> listarTodas() throws SQLException {
-        String sql = "SELECT * FROM plataforma";
-        List<Plataforma> plataformas = new ArrayList<>();
+    public List<Empresa> listarTodas() throws SQLException {
+        String sql = "SELECT * FROM empresa";
+        List<Empresa> empresas = new ArrayList<>();
 
         try (Connection conexao = ConexaoBD.conectar();
              PreparedStatement stmt = conexao.prepareStatement(sql);
@@ -38,20 +38,20 @@ public class PlataformaRepository {
             while (rs.next()) {
                 int id = rs.getInt("id");
                 String nome = rs.getString("nome");
-                Plataforma plataforma = new Plataforma(id, nome);
-                plataformas.add(plataforma);
+                Empresa empresa = new Empresa(id, nome);
+                empresas.add(empresa);
             }
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        return plataformas;
+        return empresas;
     }
 
-    public Plataforma buscarPorId(int id) throws SQLException {
-        String sql = "SELECT * FROM plataforma WHERE id = ?";
-        Plataforma plataforma = null;
+    public Empresa buscarPorId(int id) throws SQLException {
+        String sql = "SELECT * FROM empresa WHERE id = ?";
+        Empresa empresa = null;
 
         try (Connection conexao = ConexaoBD.conectar();
              PreparedStatement stmt = conexao.prepareStatement(sql)) {
@@ -60,7 +60,7 @@ public class PlataformaRepository {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    plataforma = new Plataforma(id, rs.getString("nome"));
+                    empresa = new Empresa(id, rs.getString("nome"));
                 }
             }
 
@@ -68,17 +68,17 @@ public class PlataformaRepository {
             throw new RuntimeException(e);
         }
 
-        return plataforma;
+        return empresa;
     }
 
-    public void atualizar(Plataforma plataforma) throws SQLException {
-        String sql = "UPDATE plataforma SET nome = ? WHERE id = ?";
+    public void atualizar(Empresa empresa) throws SQLException {
+        String sql = "UPDATE empresa SET nome = ? WHERE id = ?";
 
         try (Connection conexao = ConexaoBD.conectar();
              PreparedStatement stmt = conexao.prepareStatement(sql)) {
 
-            stmt.setString(1, plataforma.getNome());
-            stmt.setInt(2, plataforma.getId());
+            stmt.setString(1, empresa.getNome());
+            stmt.setInt(2, empresa.getId());
             stmt.executeUpdate();
 
         } catch (IOException e) {

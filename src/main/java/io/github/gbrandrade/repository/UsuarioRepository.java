@@ -1,25 +1,27 @@
 package io.github.gbrandrade.repository;
 
 import io.github.gbrandrade.config.ConexaoBD;
-import io.github.gbrandrade.model.Plataforma;
+import io.github.gbrandrade.model.Usuario;
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.sql.ResultSet;
-import java.util.List;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
-public class PlataformaRepository {
+public class UsuarioRepository {
 
-    public void salvar(Plataforma plataforma) throws SQLException {
-        String sql = "INSERT INTO plataforma (nome) VALUES (?)";
+    public void salvar(Usuario usuario) throws SQLException {
+        String sql = "INSERT INTO usuario (nome, email, senha) VALUES (?, ?, ?)";
 
         try (Connection conexao = ConexaoBD.conectar();
              PreparedStatement stmt = conexao.prepareStatement(sql)) {
 
-            stmt.setString(1, plataforma.getNome());
+            stmt.setString(1, usuario.getNome());
+            stmt.setString(2, usuario.getEmail());
+            stmt.setString(3, usuario.getSenha());
             stmt.executeUpdate();
 
         } catch (IOException e) {
@@ -27,9 +29,9 @@ public class PlataformaRepository {
         }
     }
 
-    public List<Plataforma> listarTodas() throws SQLException {
-        String sql = "SELECT * FROM plataforma";
-        List<Plataforma> plataformas = new ArrayList<>();
+    public List<Usuario> listarTodos() throws SQLException {
+        String sql = "SELECT * FROM usuario";
+        List<Usuario> usuarios = new ArrayList<>();
 
         try (Connection conexao = ConexaoBD.conectar();
              PreparedStatement stmt = conexao.prepareStatement(sql);
@@ -38,20 +40,22 @@ public class PlataformaRepository {
             while (rs.next()) {
                 int id = rs.getInt("id");
                 String nome = rs.getString("nome");
-                Plataforma plataforma = new Plataforma(id, nome);
-                plataformas.add(plataforma);
+                String email = rs.getString("email");
+                String senha = rs.getString("senha");
+                Usuario usuario = new Usuario(id, nome, email, senha);
+                usuarios.add(usuario);
             }
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        return plataformas;
+        return usuarios;
     }
 
-    public Plataforma buscarPorId(int id) throws SQLException {
-        String sql = "SELECT * FROM plataforma WHERE id = ?";
-        Plataforma plataforma = null;
+    public Usuario buscarPorId(int id) throws SQLException {
+        String sql = "SELECT * FROM usuario WHERE id = ?";
+        Usuario usuario = null;
 
         try (Connection conexao = ConexaoBD.conectar();
              PreparedStatement stmt = conexao.prepareStatement(sql)) {
@@ -60,7 +64,7 @@ public class PlataformaRepository {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    plataforma = new Plataforma(id, rs.getString("nome"));
+                    usuario = new Usuario(id, rs.getString("nome"), rs.getString("email"), rs.getString("senha"));
                 }
             }
 
@@ -68,17 +72,19 @@ public class PlataformaRepository {
             throw new RuntimeException(e);
         }
 
-        return plataforma;
+        return usuario;
     }
 
-    public void atualizar(Plataforma plataforma) throws SQLException {
-        String sql = "UPDATE plataforma SET nome = ? WHERE id = ?";
+    public void atualizar(Usuario usuario) throws SQLException {
+        String sql = "UPDATE usuario SET nome = ?, email = ?, senha = ? WHERE id = ?";
 
         try (Connection conexao = ConexaoBD.conectar();
              PreparedStatement stmt = conexao.prepareStatement(sql)) {
 
-            stmt.setString(1, plataforma.getNome());
-            stmt.setInt(2, plataforma.getId());
+            stmt.setString(1, usuario.getNome());
+            stmt.setString(2, usuario.getEmail());
+            stmt.setString(3, usuario.getSenha());
+            stmt.setInt(4, usuario.getId());
             stmt.executeUpdate();
 
         } catch (IOException e) {
