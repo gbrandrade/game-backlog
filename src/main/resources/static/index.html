@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameLog - O seu Backlog</title>
+    <style>
+        :root {
+            --bg-color: #14181c; /* Fundo estilo Letterboxd */
+            --card-bg: #2c3440;
+            --text-main: #9ab;
+            --text-title: #fff;
+            --accent: #00e676; /* Verde neon para dar um ar gamer/premium */
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            width: 100%;
+            padding: 40px 20px;
+            text-align: center;
+            background: linear-gradient(180deg, #1f252d 0%, var(--bg-color) 100%);
+        }
+
+        h1 {
+            color: var(--text-title);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+
+        .search-container {
+            margin-top: 20px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            max-width: 500px;
+            padding: 15px 20px;
+            border-radius: 30px;
+            border: none;
+            background-color: var(--card-bg);
+            color: white;
+            font-size: 1.1rem;
+            outline: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            transition: 0.2s;
+        }
+
+        input[type="text"]:focus {
+            box-shadow: 0 0 0 2px var(--accent);
+        }
+
+        .grid-jogos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+            padding: 40px 20px;
+            box-sizing: border-box;
+        }
+
+        .card-jogo {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.2s;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .card-jogo:hover {
+            transform: scale(1.05);
+            border: 1px solid var(--accent);
+        }
+
+        .capa-jogo {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            border-bottom: 3px solid transparent;
+            transition: 0.2s;
+        }
+
+        .card-jogo:hover .capa-jogo {
+            border-bottom: 3px solid var(--accent);
+        }
+
+        .info-jogo {
+            padding: 15px;
+            text-align: center;
+        }
+
+        .titulo-jogo {
+            color: var(--text-title);
+            font-size: 1rem;
+            font-weight: bold;
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>GameLog</h1>
+    <div class="search-container">
+        <input type="text" id="inputBusca" placeholder="Buscar jogos (ex: Grand Theft Auto)..." onkeypress="buscarSeEnter(event)">
+    </div>
+</header>
+
+<div class="grid-jogos" id="gridJogos">
+    <!-- Os jogos aparecerão aqui via JavaScript -->
+</div>
+
+<script>
+    function buscarSeEnter(event) {
+        if (event.key === 'Enter') {
+            buscarJogos();
+        }
+    }
+
+    async function buscarJogos() {
+        const query = document.getElementById('inputBusca').value;
+        if (!query) return;
+
+        const grid = document.getElementById('gridJogos');
+        grid.innerHTML = '<p style="text-align: center; width: 100%;">Buscando na API do RAWG...</p>';
+
+        try {
+            // Chama a nossa API em Java que configuramos antes
+            const response = await fetch(`/api/jogos/buscar?nome=${encodeURIComponent(query)}`);
+            const jogos = await response.json();
+
+            grid.innerHTML = ''; // Limpa o aviso de "Buscando..."
+
+            jogos.forEach(jogo => {
+                // Trata jogos sem capa para não quebrar o layout
+                const imagem = jogo.background_image ? jogo.background_image : 'https://via.placeholder.com/200x300?text=Sem+Imagem';
+
+                const card = `
+                        <div class="card-jogo" onclick="alert('No futuro, isso abrirá o modal para dar a nota pro jogo ID: ${jogo.id}')">
+                            <img src="${imagem}" alt="Capa de ${jogo.name}" class="capa-jogo">
+                            <div class="info-jogo">
+                                <p class="titulo-jogo">${jogo.name}</p>
+                            </div>
+                        </div>
+                    `;
+                grid.innerHTML += card;
+            });
+        } catch (error) {
+            grid.innerHTML = '<p style="color: red; text-align: center; width: 100%;">Erro ao buscar jogos. O servidor está ligado?</p>';
+            console.error(error);
+        }
+    }
+</script>
+
+</body>
+</html>

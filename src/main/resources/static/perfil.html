@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O meu Perfil - GameLog</title>
+    <style>
+        :root {
+            --bg-color: #14181c;
+            --card-bg: #2c3440;
+            --text-main: #9ab;
+            --text-title: #fff;
+            --accent: #00e676;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Área do Banner e Perfil */
+        .profile-header {
+            width: 100%;
+            height: 250px;
+            background-color: #1f252d;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 20px;
+            position: relative;
+        }
+
+        .avatar-container {
+            position: absolute;
+            bottom: -50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: #444;
+            object-fit: cover;
+            /* A borda premium será aplicada aqui via JavaScript */
+            border: 4px solid #2c3440;
+        }
+
+        .username {
+            color: var(--text-title);
+            font-size: 1.8rem;
+            margin-top: 60px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        /* Lista de Reviews */
+        .content {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .section-title {
+            color: var(--text-title);
+            border-bottom: 1px solid #444;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .review-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #3c4552;
+            padding-bottom: 10px;
+        }
+
+        .review-game-id {
+            color: var(--text-title);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .review-rating {
+            color: #f5c518; /* Cor de estrela/nota */
+            font-weight: bold;
+        }
+
+        .review-status {
+            display: inline-block;
+            background-color: #3c4552;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .review-text {
+            line-height: 1.6;
+            color: #ccd0d6;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Cabeçalho do Perfil -->
+<div class="profile-header" id="bannerPerfil">
+    <div class="avatar-container">
+        <!-- Imagem de avatar genérica para o MVP -->
+        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=gabriel" alt="Avatar" class="avatar" id="fotoPerfil">
+    </div>
+</div>
+
+<h2 class="username" id="nomeUsuario">Carregando...</h2>
+
+<!-- Conteúdo / Backlog -->
+<div class="content">
+    <h3 class="section-title">O meu Diário de Jogos</h3>
+    <div id="listaReviews">
+        <p>A carregar registos...</p>
+    </div>
+</div>
+
+<script>
+    // Função para ir buscar os parâmetros na URL (ex: perfil.html?user=gabriel_farias)
+    const urlParams = new URLSearchParams(window.location.search);
+    // Se não passar nada na URL, usa o teu utilizador de teste por defeito
+    const username = urlParams.get('user') || 'gabriel_farias';
+
+    async function carregarPerfil() {
+        try {
+            // 1. Vai buscar os dados do utilizador
+            const respUser = await fetch(`/api/usuarios/${username}`);
+            if (!respUser.ok) throw new Error('Utilizador não encontrado');
+            const user = await respUser.json();
+
+            document.getElementById('nomeUsuario').innerText = '@' + user.username;
+
+            // Aplica a monetização visual (Borda Premium e Banner)
+            if (user.premium) {
+                const avatar = document.getElementById('fotoPerfil');
+                avatar.style.border = `4px solid ${user.corBordaPerfil || '#0055ff'}`;
+                avatar.style.boxShadow = `0 0 15px ${user.corBordaPerfil || '#0055ff'}aa`;
+            }
+            if (user.urlBannerPerfil) {
+                document.getElementById('bannerPerfil').style.backgroundImage = `url(${user.urlBannerPerfil})`;
+            }
+
+            // 2. Vai buscar os jogos avaliados por este utilizador
+            carregarReviews(user.id);
+
+        } catch (error) {
+            document.getElementById('nomeUsuario').innerText = 'Utilizador não encontrado';
+            document.getElementById('listaReviews').innerHTML = '';
+        }
+    }
+
+    async function carregarReviews(userId) {
+        try {
+            const respReviews = await fetch(`/api/registros/usuario/${userId}`);
+            const lista = document.getElementById('listaReviews');
+
+            if (respReviews.status === 204 || !respReviews.ok) {
+                lista.innerHTML = '<p>Nenhum jogo registado ainda.</p>';
+                return;
+            }
+
+            const reviews = await respReviews.json();
+            lista.innerHTML = '';
+
+            reviews.forEach(rev => {
+                // Como não guardámos o nome do jogo na BD (apenas o ID do RAWG), mostramos o ID por agora.
+                // Num passo seguinte, podemos fazer o frontend usar este ID para puxar a capa do jogo na API do RAWG.
+                const card = `
+                        <div class="review-card">
+                            <div class="review-header">
+                                <span class="review-game-id">Jogo ID (RAWG): ${rev.idJogoRawg}</span>
+                                <span class="review-rating">★ ${rev.nota} / 5</span>
+                            </div>
+                            <span class="review-status">${rev.status}</span>
+                            <p class="review-text">"${rev.review}"</p>
+                        </div>
+                    `;
+                lista.innerHTML += card;
+            });
+        } catch (error) {
+            console.error("Erro ao carregar reviews", error);
+        }
+    }
+
+    // Executa a função ao carregar a página
+    carregarPerfil();
+</script>
+
+</body>
+</html>
