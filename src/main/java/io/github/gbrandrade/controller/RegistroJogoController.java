@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -42,5 +43,16 @@ public class RegistroJogoController {
         registroRepository.save(registro);
 
         return ResponseEntity.ok("Review guardada com sucesso!");
+    }
+
+    @GetMapping("/usuario/{usuarioId}")
+    public ResponseEntity<List<RegistroJogo>> buscarRegistrosDoUsuario(@PathVariable Long usuarioId) {
+        // Busca todos os registros vinculados ao ID daquele usuário
+        List<RegistroJogo> registros = registroRepository.findByUsuarioId(usuarioId);
+
+        if (registros.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(registros);
     }
 }

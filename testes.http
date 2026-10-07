@@ -23,3 +23,11 @@ Content-Type: application/json
   "status": "FINALIZADO",
   "review": "Obra prima. Aumentou o hype para o lançamento do GTA 6!"
 }
+
+### 3. Buscar Perfil do Usuário
+GET http://localhost:8080/api/usuarios/gabriel_farias
+
+###
+
+### 4. Buscar os Jogos Registrados pelo Usuário (ID 1)
+GET http://localhost:8080/api/registros/usuario/1

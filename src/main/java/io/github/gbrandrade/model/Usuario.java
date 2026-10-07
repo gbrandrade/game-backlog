@@ -1,5 +1,6 @@
 package io.github.gbrandrade.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -16,6 +17,7 @@ public class Usuario {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @JsonIgnore
     @Column(nullable = false)
     private String senha;
 
@@ -46,7 +48,7 @@ public class Usuario {
     public void setSenha(String senha) { this.senha = senha; }
 
     public boolean isPremium() { return isPremium; }
-    public void setPremium(boolean premium) { isPremium = premium; }
+    public void setPremium(boolean premium) { this.isPremium = premium; }
 
     public String getCorBordaPerfil() { return corBordaPerfil; }
     public void setCorBordaPerfil(String corBordaPerfil) { this.corBordaPerfil = corBordaPerfil; }

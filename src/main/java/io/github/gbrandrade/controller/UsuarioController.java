@@ -20,4 +20,13 @@ public class UsuarioController {
         Usuario novoUsuario = usuarioRepository.save(usuario);
         return ResponseEntity.ok(novoUsuario);
     }
+
+    @GetMapping("/{username}")
+    public ResponseEntity<Usuario> buscarPerfil(@PathVariable String username) {
+        Usuario usuario = usuarioRepository.findByUsername(username);
+        if (usuario == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(usuario);
+    }
 }
