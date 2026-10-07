@@ -1,0 +1,25 @@
+### 1. Criar Utilizador
+POST http://localhost:8080/api/usuarios/cadastrar
+Content-Type: application/json
+
+{
+  "username": "gabriel_farias",
+  "email": "gabriiel.farias@icloud.com",
+  "senha": "senhateste123",
+  "premium": true,
+  "corBordaPerfil": "#0055ff"
+}
+
+###
+
+### 2. Criar Registo de Jogo (Avaliando o GTA V - ID 3498)
+POST http://localhost:8080/api/registros/salvar
+Content-Type: application/json
+
+{
+  "usuarioId": 1,
+  "idJogoRawg": 3498,
+  "nota": 5,
+  "status": "FINALIZADO",
+  "review": "Obra prima. Aumentou o hype para o lançamento do GTA 6!"
+}
